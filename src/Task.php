@@ -5,7 +5,7 @@ class Task
 
     function __construct($description)
     {
-        $this->description = $description
+        $this->description = $description;
     }
 
     function setDescription($new_description)
