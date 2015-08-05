@@ -5,7 +5,8 @@
   require_once __DIR__."/../src/Task.php";
 
   session_start();
-  if (empty($_SESSION['list_of_tasks'])){
+
+  if (empty($_SESSION['list_of_tasks'])) {
           $_SESSION['list_of_tasks'] = array();
 
   }
@@ -13,16 +14,20 @@
 
   $app = new Silex\Application();
 
-  $app->get("/",function(){
-
-
-
+  $app->get("/",function() {
 
       $output = "";
 
-      foreach (Task::getAll() as $task) {
-          $output = $output . "<p>" . $task->getDescription() . "</p>";
+      if (!empty(Task::getAll())) {
+          $output .= "
+              <h1>To Do List</h1>
+              <p>Here are all of your tasks:</p>
+          ";
+
+          foreach (Task::getAll() as $task) {
+              $output = $output . "<p>" . $task->getDescription() . "</p>";
       }
+  }
 
       $output .= "</ul>
         <form action='/tasks' method='post'>
@@ -33,7 +38,11 @@
         </form>
         ";
 
-
+      $output .="
+          <form action='/delete_tasks' method='post'>
+              <button type='submit'>delete</button>
+          </form>
+      ";
 
     return $output;
 
@@ -52,8 +61,17 @@
 
 
 
-  })
+  });
 
+  $app->post("/delete_tasks", function() {
+
+      Task::deleteAll();
+
+      return "
+          <h1>List Cleared!</h1>
+          <p><a href='/''>Home</a></p>
+      ";
+  });
 
 return $app;
 
